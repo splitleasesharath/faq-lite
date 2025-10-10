@@ -393,11 +393,15 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: transform 0.3s ease;
+    transition: all 0.3s ease;
 }
 
-.accordion-item.active .accordion-icon {
-    transform: rotate(45deg);
+.accordion-icon::before {
+    content: '+';
+}
+
+.accordion-item.active .accordion-icon::before {
+    content: '−';
 }
 
 .accordion-content {

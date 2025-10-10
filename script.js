@@ -117,7 +117,7 @@ function renderFAQs(category, faqs) {
                 <div class="accordion-item">
                     <div class="accordion-header" tabindex="0" role="button" aria-expanded="false">
                         <h3>${faq.Question}</h3>
-                        <span class="accordion-icon">+</span>
+                        <span class="accordion-icon"></span>
                     </div>
                     <div class="accordion-content">
                         <p>${faq.Answer}</p>
