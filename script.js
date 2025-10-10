@@ -276,47 +276,54 @@ document.addEventListener('DOMContentLoaded', async function() {
     const marketWidget = document.getElementById('marketWidget');
     const closeWidget = document.querySelector('.close-widget');
     const nextBtn = document.querySelector('.next-btn');
-    const widgetTextarea = marketWidget.querySelector('textarea');
 
-    // Close widget functionality
-    closeWidget.addEventListener('click', function() {
-        marketWidget.style.display = 'none';
-    });
+    if (marketWidget && closeWidget && nextBtn) {
+        const widgetTextarea = marketWidget.querySelector('textarea');
 
-    // Enable/disable Next button based on textarea input
-    widgetTextarea.addEventListener('input', function() {
-        if (this.value.trim().length > 0) {
-            nextBtn.style.background = '#5B4AD6';
-            nextBtn.style.cursor = 'pointer';
-            nextBtn.disabled = false;
-        } else {
-            nextBtn.style.background = '#d0d0d0';
-            nextBtn.style.cursor = 'not-allowed';
-            nextBtn.disabled = true;
+        // Close widget functionality
+        closeWidget.addEventListener('click', function() {
+            marketWidget.style.display = 'none';
+        });
+
+        if (widgetTextarea) {
+            // Enable/disable Next button based on textarea input
+            widgetTextarea.addEventListener('input', function() {
+                if (this.value.trim().length > 0) {
+                    nextBtn.style.background = '#5B4AD6';
+                    nextBtn.style.cursor = 'pointer';
+                    nextBtn.disabled = false;
+                } else {
+                    nextBtn.style.background = '#d0d0d0';
+                    nextBtn.style.cursor = 'not-allowed';
+                    nextBtn.disabled = true;
+                }
+            });
         }
-    });
 
-    // Initialize button state
-    nextBtn.style.background = '#d0d0d0';
-    nextBtn.style.cursor = 'not-allowed';
-    nextBtn.disabled = true;
+        // Initialize button state
+        nextBtn.style.background = '#d0d0d0';
+        nextBtn.style.cursor = 'not-allowed';
+        nextBtn.disabled = true;
 
-    // Next button click handler
-    nextBtn.addEventListener('click', function() {
-        if (!this.disabled) {
-            alert('Thank you for your interest! We will send you the market research report shortly.');
-            widgetTextarea.value = '';
-            nextBtn.style.background = '#d0d0d0';
-            nextBtn.disabled = true;
-        }
-    });
+        // Next button click handler
+        nextBtn.addEventListener('click', function() {
+            if (!this.disabled && widgetTextarea) {
+                alert('Thank you for your interest! We will send you the market research report shortly.');
+                widgetTextarea.value = '';
+                nextBtn.style.background = '#d0d0d0';
+                nextBtn.disabled = true;
+            }
+        });
+    }
 
     // ==================== Floating Chat Button ====================
     const floatingChatBtn = document.querySelector('.floating-chat-btn');
 
-    floatingChatBtn.addEventListener('click', function() {
-        alert('Chat feature coming soon! Contact us at support@splitlease.com');
-    });
+    if (floatingChatBtn) {
+        floatingChatBtn.addEventListener('click', function() {
+            alert('Chat feature coming soon! Contact us at support@splitlease.com');
+        });
+    }
 
     // ==================== AI Chat Widget ====================
     const aiInput = document.querySelector('.ai-input');
@@ -325,24 +332,32 @@ document.addEventListener('DOMContentLoaded', async function() {
     const chatTooltip = document.querySelector('.chat-tooltip');
 
     // AI input handler
-    aiInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter' && this.value.trim().length > 0) {
-            handleAIQuery(this.value);
-            this.value = '';
-        }
-    });
+    if (aiInput) {
+        aiInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && this.value.trim().length > 0) {
+                handleAIQuery(this.value);
+                this.value = '';
+            }
+        });
+    }
 
     // Voice button handler
-    voiceBtn.addEventListener('click', function() {
-        alert('Voice input feature coming soon!');
-    });
+    if (voiceBtn) {
+        voiceBtn.addEventListener('click', function() {
+            alert('Voice input feature coming soon!');
+        });
+    }
 
     // Explore button handler
-    exploreBtn.addEventListener('click', function() {
-        // Scroll to top and switch to general tab
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        tabs[0].click();
-    });
+    if (exploreBtn) {
+        exploreBtn.addEventListener('click', function() {
+            // Scroll to top and switch to general tab
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            if (tabs.length > 0) {
+                tabs[0].click();
+            }
+        });
+    }
 
     // Simple AI query handler
     function handleAIQuery(query) {
@@ -430,20 +445,22 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     // ==================== Scroll Effects ====================
     let lastScroll = 0;
-    const header = document.querySelector('.header');
+    const header = document.querySelector('.main-header');
 
-    window.addEventListener('scroll', function() {
-        const currentScroll = window.pageYOffset;
+    if (header) {
+        window.addEventListener('scroll', function() {
+            const currentScroll = window.pageYOffset;
 
-        // Add shadow to header on scroll
-        if (currentScroll > 10) {
-            header.style.boxShadow = '0 2px 12px rgba(0, 0, 0, 0.15)';
-        } else {
-            header.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.1)';
-        }
+            // Add shadow to header on scroll
+            if (currentScroll > 10) {
+                header.style.boxShadow = '0 2px 12px rgba(0, 0, 0, 0.15)';
+            } else {
+                header.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.1)';
+            }
 
-        lastScroll = currentScroll;
-    });
+            lastScroll = currentScroll;
+        });
+    }
 
     // ==================== Hover Effects for Buttons ====================
     const allButtons = document.querySelectorAll('button, .btn-primary');
