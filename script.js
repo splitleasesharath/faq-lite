@@ -48,6 +48,7 @@ async function loadFAQs() {
 
     } catch (error) {
         console.error('Error loading FAQs:', error);
+        console.error('Error details:', error.message, error.details, error.hint);
         loadingState.style.display = 'none';
         errorState.style.display = 'flex';
     }
@@ -328,32 +329,37 @@ document.addEventListener('DOMContentLoaded', function() {
     const shareBtn = document.querySelector('.share-btn');
     const submitBtn = document.querySelector('.submit-btn');
 
-    shareBtn.addEventListener('click', function() {
-        const emailInput = this.previousElementSibling;
-        const email = emailInput.value;
-        const shareMethod = document.querySelector('input[name="share-method"]:checked').value;
+    if (shareBtn) {
+        shareBtn.addEventListener('click', function() {
+            const emailInput = this.previousElementSibling;
+            const email = emailInput.value;
+            const shareMethodRadio = document.querySelector('input[name="share-method"]:checked');
+            const shareMethod = shareMethodRadio ? shareMethodRadio.value : 'email';
 
-        if (email.trim() && validateEmail(email)) {
-            alert(`Referral invitation will be sent via ${shareMethod} to ${email}`);
-            emailInput.value = '';
-        } else {
-            alert('Please enter a valid email address.');
-        }
-    });
+            if (email.trim() && validateEmail(email)) {
+                alert(`Referral invitation will be sent via ${shareMethod} to ${email}`);
+                emailInput.value = '';
+            } else {
+                alert('Please enter a valid email address.');
+            }
+        });
+    }
 
-    submitBtn.addEventListener('click', function() {
-        const inputs = this.parentElement.querySelectorAll('.footer-input');
-        const url = inputs[0].value;
-        const email = inputs[1].value;
+    if (submitBtn) {
+        submitBtn.addEventListener('click', function() {
+            const inputs = this.parentElement.querySelectorAll('.footer-input');
+            const url = inputs[0].value;
+            const email = inputs[1].value;
 
-        if (url.trim() && email.trim() && validateEmail(email)) {
-            alert('Your listing import request has been submitted! We will process it shortly.');
-            inputs[0].value = '';
-            inputs[1].value = '';
-        } else {
-            alert('Please fill in both URL and email address correctly.');
-        }
-    });
+            if (url.trim() && email.trim() && validateEmail(email)) {
+                alert('Your listing import request has been submitted! We will process it shortly.');
+                inputs[0].value = '';
+                inputs[1].value = '';
+            } else {
+                alert('Please fill in both URL and email address correctly.');
+            }
+        });
+    }
 
     // Email validation helper
     function validateEmail(email) {
