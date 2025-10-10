@@ -1,3 +1,58 @@
+// Mobile Menu Toggle
+function toggleMobileMenu() {
+    const hamburger = document.querySelector('.hamburger-menu');
+    const navCenter = document.querySelector('.nav-center');
+    const navRight = document.querySelector('.nav-right');
+
+    hamburger.classList.toggle('active');
+    navCenter.classList.toggle('mobile-active');
+    navRight.classList.toggle('mobile-active');
+}
+
+// Open Auth Modal (redirects to app.split.lease)
+function openAuthModal() {
+    window.location.href = 'https://app.split.lease/signup-login';
+}
+
+// Handle Import Listing
+function handleImportListing() {
+    const url = document.getElementById('importUrl').value;
+    const email = document.getElementById('importEmail').value;
+
+    if (!url || !email) {
+        alert('Please fill in both URL and email address.');
+        return;
+    }
+
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        alert('Please enter a valid URL starting with http:// or https://');
+        return;
+    }
+
+    if (!email.includes('@') || !email.includes('.')) {
+        alert('Please enter a valid email address.');
+        return;
+    }
+
+    // Show loading state
+    const btn = document.querySelector('.import-btn');
+    const originalText = btn.textContent;
+    btn.textContent = 'Importing...';
+    btn.disabled = true;
+
+    // Simulate API call
+    setTimeout(() => {
+        btn.textContent = originalText;
+        btn.disabled = false;
+
+        alert('Your listing import request has been submitted! We will process it shortly.');
+
+        // Clear inputs
+        document.getElementById('importUrl').value = '';
+        document.getElementById('importEmail').value = '';
+    }, 2000);
+}
+
 // Wait for DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', function() {
 
