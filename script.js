@@ -3,6 +3,28 @@ const supabaseUrl = 'https://qcfifybkaddcoimjroca.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFjZmlmeWJrYWRkY29pbWpyb2NhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk0NzU0MDUsImV4cCI6MjA3NTA1MTQwNX0.glGwHxds0PzVLF1Y8VBGX0jYz3zrLsgE9KAWWwkYms8';
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
+// ==================== Supabase Connection Test ====================
+async function testSupabaseConnection() {
+    try {
+        console.log('Testing Supabase connection...');
+        const { data, error } = await supabaseClient
+            .from('zat_faq')
+            .select('count', { count: 'exact', head: true });
+
+        if (error) {
+            console.error('❌ Supabase connection FAILED:', error.message);
+            return false;
+        }
+
+        console.log('✅ Supabase connection successful!');
+        console.log(`Found ${data || 0} FAQs in database`);
+        return true;
+    } catch (error) {
+        console.error('❌ Supabase connection error:', error);
+        return false;
+    }
+}
+
 // ==================== FAQ Loading Functions ====================
 async function loadFAQs() {
     const loadingState = document.getElementById('loading-state');
@@ -13,15 +35,23 @@ async function loadFAQs() {
     errorState.style.display = 'none';
 
     try {
-        // Fetch FAQs from Supabase
+        // Fetch FAQs from Supabase with sub-category
         const { data, error } = await supabaseClient
             .from('zat_faq')
-            .select('Question, Answer, Category')
-            .order('Category', { ascending: true });
+            .select('Question, Answer, Category, sub-category')
+            .order('Category', { ascending: true })
+            .order('sub-category', { ascending: true });
 
         if (error) throw error;
 
-        // Group FAQs by category
+        // Map tab names to database Category values
+        const categoryMapping = {
+            'general': 'General',
+            'travelers': 'Guest',
+            'hosts': 'Host'
+        };
+
+        // Group FAQs by category and then by sub-category
         const faqsByCategory = {
             general: [],
             travelers: [],
@@ -29,13 +59,16 @@ async function loadFAQs() {
         };
 
         data.forEach(faq => {
-            const category = faq.Category.toLowerCase();
-            if (faqsByCategory[category]) {
-                faqsByCategory[category].push(faq);
+            // Find which tab this FAQ belongs to
+            for (const [tabName, dbCategory] of Object.entries(categoryMapping)) {
+                if (faq.Category === dbCategory) {
+                    faqsByCategory[tabName].push(faq);
+                    break;
+                }
             }
         });
 
-        // Render FAQs for each category
+        // Render FAQs for each category (now grouped by sub-category)
         renderFAQs('general', faqsByCategory.general);
         renderFAQs('travelers', faqsByCategory.travelers);
         renderFAQs('hosts', faqsByCategory.hosts);
@@ -59,19 +92,44 @@ function renderFAQs(category, faqs) {
 
     if (!container || faqs.length === 0) return;
 
-    const faqHTML = faqs.map((faq, index) => `
-        <div class="accordion-item">
-            <div class="accordion-header" tabindex="0" role="button" aria-expanded="false">
-                <h3>${faq.Question}</h3>
-                <span class="accordion-icon">+</span>
-            </div>
-            <div class="accordion-content">
-                <p>${faq.Answer}</p>
-            </div>
-        </div>
-    `).join('');
+    // Group FAQs by sub-category
+    const faqsBySubCategory = {};
 
-    container.innerHTML = faqHTML;
+    faqs.forEach(faq => {
+        const subCat = faq['sub-category'] || 'General';
+        if (!faqsBySubCategory[subCat]) {
+            faqsBySubCategory[subCat] = [];
+        }
+        faqsBySubCategory[subCat].push(faq);
+    });
+
+    // Build HTML with sections for each sub-category
+    let html = '';
+
+    for (const [subCategory, subCategoryFaqs] of Object.entries(faqsBySubCategory)) {
+        html += `
+            <section class="faq-section">
+                <h2 class="section-title">${subCategory}</h2>
+        `;
+
+        subCategoryFaqs.forEach(faq => {
+            html += `
+                <div class="accordion-item">
+                    <div class="accordion-header" tabindex="0" role="button" aria-expanded="false">
+                        <h3>${faq.Question}</h3>
+                        <span class="accordion-icon">+</span>
+                    </div>
+                    <div class="accordion-content">
+                        <p>${faq.Answer}</p>
+                    </div>
+                </div>
+            `;
+        });
+
+        html += `</section>`;
+    }
+
+    container.innerHTML = html;
 }
 
 function initializeAccordion() {
@@ -179,7 +237,10 @@ function handleImportListing() {
 }
 
 // Wait for DOM to be fully loaded
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
+
+    // ==================== Test Supabase Connection ====================
+    await testSupabaseConnection();
 
     // ==================== Load FAQs from Supabase ====================
     loadFAQs();
