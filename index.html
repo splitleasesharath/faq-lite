@@ -9,6 +9,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Supabase Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
     <!-- Header Navigation -->
@@ -108,364 +110,31 @@
 
     <!-- FAQ Content -->
     <main class="faq-container">
+        <!-- Loading State -->
+        <div id="loading-state" class="loading-container">
+            <div class="spinner"></div>
+            <p>Loading FAQs...</p>
+        </div>
+
+        <!-- Error State -->
+        <div id="error-state" class="error-container" style="display: none;">
+            <p class="error-message">Unable to load FAQs. Please try again later.</p>
+            <button onclick="loadFAQs()" class="retry-btn">Retry</button>
+        </div>
+
         <!-- General Questions Tab -->
         <div class="tab-content active" id="general">
-            <section class="faq-section">
-                <h2 class="section-title">General Questions</h2>
-
-                <div class="accordion-item">
-                    <div class="accordion-header">
-                        <h3 class="accordion-question">What is Split Lease and what do you do?</h3>
-                        <span class="accordion-icon">+</span>
-                    </div>
-                    <div class="accordion-content">
-                        <p>Split Lease is a platform that connects people who need temporary housing with hosts who have spaces available. We specialize in flexible, short-term rentals perfect for hybrid workers, commuters, and travelers who need accommodation for specific days of the week or month.</p>
-                    </div>
-                </div>
-
-                <div class="accordion-item">
-                    <div class="accordion-header">
-                        <h3 class="accordion-question">What's the easiest way to get started?</h3>
-                        <span class="accordion-icon">+</span>
-                    </div>
-                    <div class="accordion-content">
-                        <p>Getting started is simple:</p>
-                        <ol>
-                            <li>Create a free account on Split Lease</li>
-                            <li>Browse available spaces in your desired location</li>
-                            <li>Book your trial night or schedule a viewing</li>
-                            <li>Complete your booking and enjoy your stay!</li>
-                        </ol>
-                    </div>
-                </div>
-
-                <div class="accordion-item">
-                    <div class="accordion-header">
-                        <h3 class="accordion-question">What are ways to get the best price and most available spaces?</h3>
-                        <span class="accordion-icon">+</span>
-                    </div>
-                    <div class="accordion-content">
-                        <p>To find the best deals and availability:</p>
-                        <ul>
-                            <li>Book in advance for better pricing</li>
-                            <li>Consider flexible dates for more options</li>
-                            <li>Look for weekly or monthly packages</li>
-                            <li>Set up alerts for your preferred locations</li>
-                            <li>Be open to different neighborhoods or slightly longer commutes</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="accordion-item">
-                    <div class="accordion-header">
-                        <h3 class="accordion-question">What things can I store at my Split Lease rental?</h3>
-                        <span class="accordion-icon">+</span>
-                    </div>
-                    <div class="accordion-content">
-                        <p>Most rentals allow you to store personal belongings, clothing, toiletries, and work equipment. However, storage options vary by property. Always check with your host about specific storage arrangements and what's included in your rental agreement.</p>
-                    </div>
-                </div>
-
-                <div class="accordion-item">
-                    <div class="accordion-header">
-                        <h3 class="accordion-question">Who would benefit most from Split Lease?</h3>
-                        <span class="accordion-icon">+</span>
-                    </div>
-                    <div class="accordion-content">
-                        <p>Split Lease is perfect for:</p>
-                        <ul>
-                            <li>Hybrid workers who commute to the city a few days per week</li>
-                            <li>Business travelers with recurring trips</li>
-                            <li>Students with internships or part-time programs</li>
-                            <li>Digital nomads seeking flexible arrangements</li>
-                            <li>Anyone looking for cost-effective alternatives to hotels or full-time apartments</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="accordion-item">
-                    <div class="accordion-header">
-                        <h3 class="accordion-question">How do I benefit (as a hybrid-work-commuter) from this service?</h3>
-                        <span class="accordion-icon">+</span>
-                    </div>
-                    <div class="accordion-content">
-                        <p>As a hybrid worker, you can:</p>
-                        <ul>
-                            <li>Save money by only paying for the nights you need</li>
-                            <li>Reduce commute time and stress</li>
-                            <li>Maintain a consistent space near your office</li>
-                            <li>Avoid expensive hotels or full-time rent</li>
-                            <li>Have a dedicated workspace in the city</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="accordion-item">
-                    <div class="accordion-header">
-                        <h3 class="accordion-question">How is the Split Lease experience different from Airbnb?</h3>
-                        <span class="accordion-icon">+</span>
-                    </div>
-                    <div class="accordion-content">
-                        <p>While Airbnb focuses on vacation rentals, Split Lease specializes in recurring, flexible arrangements for workers and commuters. We offer weekly patterns, longer-term consistency, and are optimized for people who need the same space regularly rather than one-off stays.</p>
-                    </div>
-                </div>
-
-                <div class="accordion-item">
-                    <div class="accordion-header">
-                        <h3 class="accordion-question">What makes this service better than Craigslist?</h3>
-                        <span class="accordion-icon">+</span>
-                    </div>
-                    <div class="accordion-content">
-                        <p>Split Lease offers:</p>
-                        <ul>
-                            <li>Verified hosts and secure payments</li>
-                            <li>Professional customer support</li>
-                            <li>Standardized booking process</li>
-                            <li>Reviews and ratings system</li>
-                            <li>Legal protections and guarantees</li>
-                            <li>Easy-to-use platform with instant booking</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="accordion-item">
-                    <div class="accordion-header">
-                        <h3 class="accordion-question">What kinds of people would benefit most from trial nights?</h3>
-                        <span class="accordion-icon">+</span>
-                    </div>
-                    <div class="accordion-content">
-                        <p>Trial nights are ideal for:</p>
-                        <ul>
-                            <li>First-time users wanting to test the service</li>
-                            <li>People considering a long-term arrangement</li>
-                            <li>Those who want to experience the location before committing</li>
-                            <li>Anyone unsure about the host or property fit</li>
-                        </ul>
-                    </div>
-                </div>
-            </section>
+            <!-- FAQs will be loaded dynamically here -->
         </div>
 
         <!-- For Travelers Tab -->
         <div class="tab-content" id="travelers">
-            <section class="faq-section">
-                <h2 class="section-title">Getting Started</h2>
-
-                <div class="accordion-item">
-                    <div class="accordion-header">
-                        <h3 class="accordion-question">How do I create an account?</h3>
-                        <span class="accordion-icon">+</span>
-                    </div>
-                    <div class="accordion-content">
-                        <p>Click on "Sign Up" in the top right corner, enter your email address, create a password, and complete your profile. You can also sign up using Google or Facebook for faster registration.</p>
-                    </div>
-                </div>
-
-                <div class="accordion-item">
-                    <div class="accordion-header">
-                        <h3 class="accordion-question">Do I need to verify my identity?</h3>
-                        <span class="accordion-icon">+</span>
-                    </div>
-                    <div class="accordion-content">
-                        <p>Yes, for security purposes we require identity verification. You'll need to upload a government-issued ID and take a selfie. This helps create a trusted community for both guests and hosts.</p>
-                    </div>
-                </div>
-
-                <div class="accordion-item">
-                    <div class="accordion-header">
-                        <h3 class="accordion-question">How do I search for available spaces?</h3>
-                        <span class="accordion-icon">+</span>
-                    </div>
-                    <div class="accordion-content">
-                        <p>Use our search bar to enter your desired location, dates, and any specific requirements. You can filter results by price, amenities, property type, and more to find the perfect match for your needs.</p>
-                    </div>
-                </div>
-            </section>
-
-            <section class="faq-section">
-                <h2 class="section-title">Before You Book</h2>
-
-                <div class="accordion-item">
-                    <div class="accordion-header">
-                        <h3 class="accordion-question">What payment methods do you accept?</h3>
-                        <span class="accordion-icon">+</span>
-                    </div>
-                    <div class="accordion-content">
-                        <p>We accept all major credit cards (Visa, Mastercard, American Express, Discover), debit cards, and PayPal. All payments are processed securely through our encrypted payment system.</p>
-                    </div>
-                </div>
-
-                <div class="accordion-item">
-                    <div class="accordion-header">
-                        <h3 class="accordion-question">What is your cancellation policy?</h3>
-                        <span class="accordion-icon">+</span>
-                    </div>
-                    <div class="accordion-content">
-                        <p>Cancellation policies vary by host but typically include:</p>
-                        <ul>
-                            <li><strong>Flexible:</strong> Full refund up to 24 hours before check-in</li>
-                            <li><strong>Moderate:</strong> Full refund up to 5 days before check-in</li>
-                            <li><strong>Strict:</strong> 50% refund up to 7 days before check-in</li>
-                        </ul>
-                        <p>The specific policy will be clearly displayed before you book.</p>
-                    </div>
-                </div>
-
-                <div class="accordion-item">
-                    <div class="accordion-header">
-                        <h3 class="accordion-question">Can I message the host before booking?</h3>
-                        <span class="accordion-icon">+</span>
-                    </div>
-                    <div class="accordion-content">
-                        <p>Absolutely! We encourage guests to communicate with hosts before booking. You can ask questions about the space, amenities, house rules, or anything else that will help you make an informed decision.</p>
-                    </div>
-                </div>
-
-                <div class="accordion-item">
-                    <div class="accordion-header">
-                        <h3 class="accordion-question">Are there any additional fees?</h3>
-                        <span class="accordion-icon">+</span>
-                    </div>
-                    <div class="accordion-content">
-                        <p>The total price includes the nightly rate plus a service fee (typically 10-15% of the booking subtotal). Some hosts may also charge a cleaning fee or security deposit. All fees are clearly displayed before you confirm your booking.</p>
-                    </div>
-                </div>
-            </section>
+            <!-- FAQs will be loaded dynamically here -->
         </div>
 
         <!-- For Hosts Tab -->
         <div class="tab-content" id="hosts">
-            <section class="faq-section">
-                <h2 class="section-title">Listing Your Space</h2>
-
-                <div class="accordion-item">
-                    <div class="accordion-header">
-                        <h3 class="accordion-question">How do I list my property on Split Lease?</h3>
-                        <span class="accordion-icon">+</span>
-                    </div>
-                    <div class="accordion-content">
-                        <p>Click "Host with Us" in the navigation menu and follow our step-by-step process. You'll need to provide details about your space, upload photos, set your availability and pricing, and complete verification. The entire process takes about 15-20 minutes.</p>
-                    </div>
-                </div>
-
-                <div class="accordion-item">
-                    <div class="accordion-header">
-                        <h3 class="accordion-question">What photos should I include in my listing?</h3>
-                        <span class="accordion-icon">+</span>
-                    </div>
-                    <div class="accordion-content">
-                        <p>Include clear, well-lit photos of:</p>
-                        <ul>
-                            <li>The bedroom(s) from multiple angles</li>
-                            <li>Bathroom facilities</li>
-                            <li>Kitchen and common areas</li>
-                            <li>Any workspace or desk areas</li>
-                            <li>Parking or entrance areas</li>
-                            <li>Special amenities</li>
-                        </ul>
-                        <p>High-quality photos can increase bookings by up to 40%!</p>
-                    </div>
-                </div>
-
-                <div class="accordion-item">
-                    <div class="accordion-header">
-                        <h3 class="accordion-question">How do I set my pricing?</h3>
-                        <span class="accordion-icon">+</span>
-                    </div>
-                    <div class="accordion-content">
-                        <p>Consider factors like location, amenities, competition, and demand when setting prices. Our platform provides pricing suggestions based on similar listings in your area. You can also offer weekly or monthly discounts to attract longer-term guests.</p>
-                    </div>
-                </div>
-
-                <div class="accordion-item">
-                    <div class="accordion-header">
-                        <h3 class="accordion-question">Can I block certain dates?</h3>
-                        <span class="accordion-icon">+</span>
-                    </div>
-                    <div class="accordion-content">
-                        <p>Yes! You have complete control over your calendar. You can block dates when your space isn't available, set minimum stay requirements, and adjust availability patterns for recurring bookings.</p>
-                    </div>
-                </div>
-
-                <div class="accordion-item">
-                    <div class="accordion-header">
-                        <h3 class="accordion-question">How do I handle guest check-in?</h3>
-                        <span class="accordion-icon">+</span>
-                    </div>
-                    <div class="accordion-content">
-                        <p>You can choose from several check-in methods:</p>
-                        <ul>
-                            <li>In-person greeting</li>
-                            <li>Lockbox with key code</li>
-                            <li>Smart lock with unique codes</li>
-                            <li>Building concierge or doorman</li>
-                        </ul>
-                        <p>Provide clear check-in instructions to your guests before their arrival.</p>
-                    </div>
-                </div>
-            </section>
-
-            <section class="faq-section">
-                <h2 class="section-title">Legal, Taxes & Agreements</h2>
-
-                <div class="accordion-item">
-                    <div class="accordion-header">
-                        <h3 class="accordion-question">Do I need permission from my landlord to host?</h3>
-                        <span class="accordion-icon">+</span>
-                    </div>
-                    <div class="accordion-content">
-                        <p>If you rent your property, you should check your lease agreement and get written permission from your landlord before listing on Split Lease. Many leases prohibit subletting or short-term rentals.</p>
-                    </div>
-                </div>
-
-                <div class="accordion-item">
-                    <div class="accordion-header">
-                        <h3 class="accordion-question">What are my tax obligations as a host?</h3>
-                        <span class="accordion-icon">+</span>
-                    </div>
-                    <div class="accordion-content">
-                        <p>Rental income is typically taxable. You may need to:</p>
-                        <ul>
-                            <li>Report income on your tax return</li>
-                            <li>Pay occupancy or lodging taxes</li>
-                            <li>Keep records of expenses for deductions</li>
-                        </ul>
-                        <p>Tax requirements vary by location. We recommend consulting with a tax professional for personalized advice.</p>
-                    </div>
-                </div>
-
-                <div class="accordion-item">
-                    <div class="accordion-header">
-                        <h3 class="accordion-question">What insurance do I need?</h3>
-                        <span class="accordion-icon">+</span>
-                    </div>
-                    <div class="accordion-content">
-                        <p>Split Lease provides Host Protection Insurance up to $1 million for property damage. However, we recommend:</p>
-                        <ul>
-                            <li>Informing your homeowners or renters insurance provider</li>
-                            <li>Considering additional short-term rental insurance</li>
-                            <li>Understanding what's covered and what's not</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="accordion-item">
-                    <div class="accordion-header">
-                        <h3 class="accordion-question">What happens if a guest damages my property?</h3>
-                        <span class="accordion-icon">+</span>
-                    </div>
-                    <div class="accordion-content">
-                        <p>If damage occurs:</p>
-                        <ol>
-                            <li>Document the damage with photos immediately</li>
-                            <li>Contact Split Lease support within 24 hours</li>
-                            <li>File a damage claim through our resolution center</li>
-                            <li>Our team will review and facilitate resolution</li>
-                        </ol>
-                        <p>Our Host Protection Insurance covers eligible damages up to $1 million.</p>
-                    </div>
-                </div>
-            </section>
+            <!-- FAQs will be loaded dynamically here -->
         </div>
     </main>
 

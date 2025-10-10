@@ -1,3 +1,127 @@
+// ==================== Supabase Configuration ====================
+const supabaseUrl = 'https://qcfifybkaddcoimjroca.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFjZmlmeWJrYWRkY29pbWpyb2NhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk0NzU0MDUsImV4cCI6MjA3NTA1MTQwNX0.glGwHxds0PzVLF1Y8VBGX0jYz3zrLsgE9KAWWwkYms8';
+const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+// ==================== FAQ Loading Functions ====================
+async function loadFAQs() {
+    const loadingState = document.getElementById('loading-state');
+    const errorState = document.getElementById('error-state');
+
+    // Show loading state
+    loadingState.style.display = 'flex';
+    errorState.style.display = 'none';
+
+    try {
+        // Fetch FAQs from Supabase
+        const { data, error } = await supabaseClient
+            .from('zat_faq')
+            .select('Question, Answer, Category')
+            .order('Category', { ascending: true });
+
+        if (error) throw error;
+
+        // Group FAQs by category
+        const faqsByCategory = {
+            general: [],
+            travelers: [],
+            hosts: []
+        };
+
+        data.forEach(faq => {
+            const category = faq.Category.toLowerCase();
+            if (faqsByCategory[category]) {
+                faqsByCategory[category].push(faq);
+            }
+        });
+
+        // Render FAQs for each category
+        renderFAQs('general', faqsByCategory.general);
+        renderFAQs('travelers', faqsByCategory.travelers);
+        renderFAQs('hosts', faqsByCategory.hosts);
+
+        // Hide loading state
+        loadingState.style.display = 'none';
+
+        // Re-initialize accordion functionality
+        initializeAccordion();
+
+    } catch (error) {
+        console.error('Error loading FAQs:', error);
+        loadingState.style.display = 'none';
+        errorState.style.display = 'flex';
+    }
+}
+
+function renderFAQs(category, faqs) {
+    const container = document.getElementById(category);
+
+    if (!container || faqs.length === 0) return;
+
+    const faqHTML = faqs.map((faq, index) => `
+        <div class="accordion-item">
+            <div class="accordion-header" tabindex="0" role="button" aria-expanded="false">
+                <h3>${faq.Question}</h3>
+                <span class="accordion-icon">+</span>
+            </div>
+            <div class="accordion-content">
+                <p>${faq.Answer}</p>
+            </div>
+        </div>
+    `).join('');
+
+    container.innerHTML = faqHTML;
+}
+
+function initializeAccordion() {
+    const accordionItems = document.querySelectorAll('.accordion-item');
+
+    accordionItems.forEach((item, index) => {
+        const header = item.querySelector('.accordion-header');
+
+        // Remove any existing listeners
+        const newHeader = header.cloneNode(true);
+        header.parentNode.replaceChild(newHeader, header);
+
+        newHeader.addEventListener('click', function() {
+            const isActive = item.classList.contains('active');
+            accordionItems.forEach(i => i.classList.remove('active'));
+            if (!isActive) {
+                item.classList.add('active');
+            }
+        });
+
+        newHeader.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                this.click();
+                this.setAttribute('aria-expanded',
+                    item.classList.contains('active') ? 'true' : 'false'
+                );
+            }
+        });
+
+        // Animation on scroll
+        item.style.opacity = '0';
+        item.style.transform = 'translateY(20px)';
+        item.style.transition = `all 0.5s ease ${index * 0.05}s`;
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        observer.observe(item);
+    });
+}
+
 // Mobile Menu Toggle
 function toggleMobileMenu() {
     const hamburger = document.querySelector('.hamburger-menu');
@@ -56,6 +180,9 @@ function handleImportListing() {
 // Wait for DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', function() {
 
+    // ==================== Load FAQs from Supabase ====================
+    loadFAQs();
+
     // ==================== Tab Switching Functionality ====================
     const tabs = document.querySelectorAll('.tab');
     const tabContents = document.querySelectorAll('.tab-content');
@@ -80,26 +207,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 behavior: 'smooth',
                 block: 'start'
             });
-        });
-    });
-
-    // ==================== Accordion Functionality ====================
-    const accordionItems = document.querySelectorAll('.accordion-item');
-
-    accordionItems.forEach(item => {
-        const header = item.querySelector('.accordion-header');
-
-        header.addEventListener('click', function() {
-            // Toggle active class
-            const isActive = item.classList.contains('active');
-
-            // Close all accordion items (optional - remove these lines for multi-open accordion)
-            accordionItems.forEach(i => i.classList.remove('active'));
-
-            // Toggle current item
-            if (!isActive) {
-                item.classList.add('active');
-            }
         });
     });
 
@@ -283,24 +390,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // ==================== Keyboard Accessibility ====================
-    // Allow Enter/Space to trigger accordion
-    accordionItems.forEach(item => {
-        const header = item.querySelector('.accordion-header');
-        header.setAttribute('tabindex', '0');
-        header.setAttribute('role', 'button');
-        header.setAttribute('aria-expanded', 'false');
-
-        header.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                this.click();
-                this.setAttribute('aria-expanded',
-                    item.classList.contains('active') ? 'true' : 'false'
-                );
-            }
-        });
-    });
-
     // Allow Enter/Space to trigger tabs
     tabs.forEach(tab => {
         tab.setAttribute('role', 'tab');
@@ -312,32 +401,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // ==================== Animation on Scroll (Optional) ====================
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    };
-
-    const observer = new IntersectionObserver(function(entries) {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
-            }
-        });
-    }, observerOptions);
-
-    // Observe accordion items for fade-in animation
-    accordionItems.forEach((item, index) => {
-        item.style.opacity = '0';
-        item.style.transform = 'translateY(20px)';
-        item.style.transition = `all 0.5s ease ${index * 0.05}s`;
-        observer.observe(item);
-    });
-
     // ==================== Initialize ====================
     console.log('Split Lease FAQ Page Loaded Successfully!');
-    console.log('Total FAQ sections:', tabContents.length);
-    console.log('Total FAQ items:', accordionItems.length);
 
 });

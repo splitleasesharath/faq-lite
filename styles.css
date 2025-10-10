@@ -988,6 +988,53 @@ body {
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
 }
 
+/* Loading and Error States */
+.loading-container,
+.error-container {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #5B4AD6;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-container p,
+.error-message {
+    font-size: 18px;
+    color: #666;
+    margin-top: 16px;
+}
+
+.retry-btn {
+    margin-top: 20px;
+    padding: 12px 24px;
+    background: #5B4AD6;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.retry-btn:hover {
+    background: #4a3ab5;
+    transform: scale(1.02);
+}
+
 /* Responsive Design */
 @media (max-width: 1024px) {
     .market-research-widget {
